@@ -4,8 +4,14 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+interface IData {
+  status: Number
+  data: string
+}
+
 function App() {
   const [count, setCount] = useState(0)
+  const [data, setData] = useState<IData>({status: 0, data: ''})
   useEffect(() => {
     const controller = new AbortController();
     const getDefault = async () => {
@@ -13,7 +19,7 @@ function App() {
       try {
         await axios.get(
           'http://localhost/'
-        )
+        ).then(res => setData(res.data))
       } catch (err) {
         console.error(err);
       } finally {
@@ -35,6 +41,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React + Docker</h1>
+      <h2>{data.data}</h2>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
