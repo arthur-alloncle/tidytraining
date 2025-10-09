@@ -15,7 +15,7 @@ RUN npm ci
 
 COPY . /code
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev2"]
 
 FROM development AS dev-envs
 
