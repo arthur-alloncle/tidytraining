@@ -1,15 +1,16 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+
 @Entity()
-export class CourseProjectEntity {
+export class CourseProject {
     @PrimaryKey()
     id!: number;
 
     @Property()
     title!: string;
 
-    @Property({type: 'datetime'})
-    created_at = Date;
+    @Property()
+    created_at = new Date();
 
-    @Property({type: 'datetime'})
-   updated_at = Date;
+    @Property({onUpdate: () => new Date()})
+    updated_at = new Date;
 }
