@@ -1,6 +1,5 @@
 import { Options, MariaDbDriver } from "@mikro-orm/mariadb";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
-import { CourseProject } from './entity/courseProjectEntity.entity.js'
 import { readFileSync } from "fs";
 
 let dbPassword = process.env.DATABASE_PASSWORD;

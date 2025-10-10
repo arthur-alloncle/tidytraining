@@ -4,8 +4,8 @@ import { getCourseProjetById, getAllCourseProject, addCourseProject} from "../co
 
 const router = Router();
 
-router.get('/project/', getAllCourseProject);
-router.get('/project/:id', getCourseProjetById);
-router.post('/project/', addCourseProject);
+router.get('/', getAllCourseProject);
+router.get('/:id', getCourseProjetById);
+router.post('/', addCourseProject);
 
 export default router;
