@@ -6,24 +6,27 @@ import './App.css'
 
 interface IData {
   status: Number
-  data: string
+  data: any
 }
 
 function App() {
   const [count, setCount] = useState(0)
-  const [data, setData] = useState<IData>({status: 0, data: ''})
+  const [data, setData] = useState<IData>({status: 0, data: {}})
   useEffect(() => {
     const controller = new AbortController();
     const getDefault = async () => {
       console.log('fetch /');
       try {
         await axios.get(
-          'http://localhost/'
-        ).then(res => setData(res.data))
+          'http://localhost/project/1'
+        ).then(res => {
+          setData(res.data)
+          console.log(res);
+        })
       } catch (err) {
         console.error(err);
       } finally {
-        console.log('prout')
+        //stop loader
       }
     }
     getDefault();
@@ -41,7 +44,8 @@ function App() {
         </a>
       </div>
       <h1>Vite + React + Docker</h1>
-      <h2>{data.data}</h2>
+      {/* <h2>{data.data}</h2> */}
+      <h2>{data.data.title}</h2>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
@@ -58,3 +62,4 @@ function App() {
 }
 
 export default App
+
