@@ -5,25 +5,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-let CourseProjectEntity = class CourseProjectEntity {
+let CourseProject = class CourseProject {
     id;
     title;
-    created_at = Date;
-    updated_at = Date;
+    created_at = new Date();
+    updated_at = new Date;
 };
 __decorate([
     PrimaryKey()
-], CourseProjectEntity.prototype, "id", void 0);
+], CourseProject.prototype, "id", void 0);
 __decorate([
     Property()
-], CourseProjectEntity.prototype, "title", void 0);
+], CourseProject.prototype, "title", void 0);
 __decorate([
-    Property({ type: 'datetime' })
-], CourseProjectEntity.prototype, "created_at", void 0);
+    Property()
+], CourseProject.prototype, "created_at", void 0);
 __decorate([
-    Property({ type: 'datetime' })
-], CourseProjectEntity.prototype, "updated_at", void 0);
-CourseProjectEntity = __decorate([
+    Property({ onUpdate: () => new Date() })
+], CourseProject.prototype, "updated_at", void 0);
+CourseProject = __decorate([
     Entity()
-], CourseProjectEntity);
-export { CourseProjectEntity };
+], CourseProject);
+export { CourseProject };

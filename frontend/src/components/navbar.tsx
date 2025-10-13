@@ -1,5 +1,4 @@
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
 import {
@@ -20,32 +19,50 @@ import {
   TwitterIcon,
   GithubIcon,
   DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
 } from "@/components/icons";
 import { Logo } from "@/components/icons";
+import { Form, Popover, PopoverContent, PopoverTrigger, addToast } from "@heroui/react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { HiFolderPlus } from "react-icons/hi2";
 
 export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
+  // Création de projet, probablement à bouger ailleurs plus tard
+  const navigate = useNavigate();
+  const mutation = useMutation({
+    mutationFn: async (body: {[k: string]: FormDataEntryValue}) => {
+        axios
+        .post("http://localhost/project/", body)
+        .then((res) => {
+          addToast({
+            title: "C'est parti !",
+            description: "Le projet de cours a bien été créé",
+            color: "success"
+          })
+          //@ts-ignore
+          navigate({
+            pathname: `/blog/${res.data.courseProject.id}`,
+            state: { isOpen: true }
+          })
+        }).catch((error) => {
+          console.warn(error)
+          addToast({
+            title: "Une erreur est survenue",
+            description: "Le projet n'a pas été créé",
+            color: "danger"
+          })
+        })
+
+    },
+  });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const body = Object.fromEntries(new FormData(e.currentTarget));
+    mutation.mutate(body)
+  };
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
@@ -57,7 +74,7 @@ export const Navbar = () => {
             href="/"
           >
             <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <p className="font-bold text-inherit">TidyTraining</p>
           </Link>
         </NavbarBrand>
         <div className="hidden lg:flex gap-4 justify-start ml-2">
@@ -66,7 +83,7 @@ export const Navbar = () => {
               <Link
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
@@ -94,22 +111,39 @@ export const Navbar = () => {
           </Link>
           <ThemeSwitch />
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
         <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Button
+                className="text-sm font-normal text-default-600 bg-default-100"
+                startContent={<HiFolderPlus className="text-xl text-success"  />}
+                variant="flat"
+              >
+                
+                Nouveau projet
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[240px]">
+              <div className="px-1 py-2 w-full">
+                <div className="mt-2 flex flex-col gap-2 w-full">
+                  <Form onSubmit={onSubmit}>
+                    <Input
+                      label="Nom du projet"
+                      name="title"
+                      type="text"
+                      size="sm"
+                      variant="bordered"
+                    />
+                    <Button type="submit">Créer</Button>
+                  </Form>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      <NavbarContent className="md:hidden basis-1 pl-4" justify="end">
         <Link isExternal href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
         </Link>
@@ -118,19 +152,16 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-        {searchInput}
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {siteConfig.navItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                )}
+                color="foreground"
+                href={item.href}
                 size="lg"
               >
                 {item.label}

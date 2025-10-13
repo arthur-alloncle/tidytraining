@@ -1,6 +1,6 @@
-export declare class CourseProjectEntity {
+export declare class CourseProject {
     id: number;
     title: string;
-    created_at: DateConstructor;
-    updated_at: DateConstructor;
+    created_at: Date;
+    updated_at: Date;
 }

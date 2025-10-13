@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "mikro-orm": {
+    "useTsNode": false
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
     "dev2": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:create'",
+    "pull-migrations": "docker cp react_express_docker-backend-1:/code/migrations/ ./src/migrations/.",
+    "play-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:up'",
+    "reverse-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:down'",
+    "mariadb": "docker exec -it react_express_docker-database-1 sh -c 'mariadb -u root -p tidytraining'"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +25,7 @@
   "dependencies": {
     "@mikro-orm/core": "^6.5.7",
     "@mikro-orm/mariadb": "^6.5.7",
+    "@mikro-orm/migrations": "^6.5.7",
     "@mikro-orm/reflection": "^6.5.7",
     "@types/cors": "^2.8.19",
     "cors": "^2.8.5",

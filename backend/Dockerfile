@@ -29,3 +29,5 @@ useradd -s /bin/bash -m vscode
 groupadd docker
 usermod -aG docker vscode
 EOF
+
+CMD [ "npx", "mikro-orm", "migration:up" ]

@@ -1,40 +1,51 @@
-import { Options, MariaDbDriver } from "@mikro-orm/mariadb";
+import { MariaDbDriver, Options } from "@mikro-orm/mariadb";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
+import { TSMigrationGenerator } from "@mikro-orm/migrations";
 import { readFileSync } from "fs";
 
 let dbPassword = process.env.DATABASE_PASSWORD;
-if (dbPassword && dbPassword.startsWith('/')) {
+if (dbPassword && dbPassword.startsWith("/")) {
   try {
-    dbPassword = readFileSync(dbPassword, 'utf-8').trim();
+    dbPassword = readFileSync(dbPassword, "utf-8").trim();
   } catch (err) {
     console.error("Erreur lecture secret DB:", err);
   }
 }
 
 const mconfig: Options = {
-    entities: ['dist/**/*.entity.js'],
-    entitiesTs: ['src/**/*.entity.ts'],
-    metadataProvider: TsMorphMetadataProvider,
-    debug: true,
+  entities: ["dist/**/*.entity.js"],
+  entitiesTs: ["src/**/*.entity.ts"],
+  metadataProvider: TsMorphMetadataProvider,
+  debug: true,
+  driver: MariaDbDriver,
 
-    driver: MariaDbDriver,
-    driverOptions: {
-      allowPublicKeyRetrieval: true
-    },
-    host: process.env.DATABASE_HOST || "localhost",
-    dbName: process.env.DATABASE_DB,
-    port: Number(process.env.DATABASE_PORT),
-    user: process.env.DATABASE_USER,
-    //@ts-ignore
-    password: dbPassword,
+  // driverOptions: {
+  //   allowPublicKeyRetrieval: true,
+  // },
 
-    // discovery: {
-    //   warnWhenNoEntities: false, // by default, discovery throws when no entity is processed
-    //   requireEntitiesArray: true, // force usage of class references in `entities` instead of paths
-    //   alwaysAnalyseProperties: false, // do not analyse properties when not needed (with ts-morph)
-    // },
-  };
+  host: process.env.DATABASE_HOST || "localhost",
+  dbName: 'tidytraining',
+  port: Number(process.env.DATABASE_PORT),
+  user: process.env.DATABASE_USER,
+  //@ts-ignore
+  password: dbPassword,
+  migrations: {
+    tableName: "mikro_orm_migrations",
+    path: "./migrations/.",
+    pathTs: './migrations/.',
+    glob: "!(*.d).{js,ts,cjs}",
+    silent: false,
+    transactional: true,
+    disableForeignKeys: false,
+    allOrNothing: true,
+    dropTables: true,
+    safe: false,
+    snapshot: true,
+    emit: "ts",
+    generator: TSMigrationGenerator,
+    fileName: (timestamp: string, name?: string) =>
+      `Migration${timestamp}${name ? "_" + name : ""}`,
+  },
+};
 
-
-  
-  export default mconfig;
+export default mconfig;

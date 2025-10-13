@@ -9,7 +9,7 @@ const em = orm.em.fork()
 export const getAllCourseProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const courseProjectList = await em.findAll(CourseProject);
-        res.status(200).json({success: true, data: courseProjectList});
+        return res.status(200).json({success: true, data: courseProjectList});
     } catch (error) {
         console.error(error);
         next(error);
@@ -19,7 +19,7 @@ export const getAllCourseProject = async (req: Request, res: Response, next: Nex
 export const getCourseProjetById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const courseProject = await em.findOne<any>(CourseProject, req.params.id);
-        res.status(200).json({success: true, data: courseProject});
+        return res.status(200).json({success: true, data: courseProject});
     } catch(error) {
         console.error(error);
         next(error);
@@ -29,9 +29,11 @@ export const getCourseProjetById = async (req: Request, res: Response, next: Nex
 export const addCourseProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const courseProject = new CourseProject();
-        courseProject.title = "Project 2"
-        em.persist(courseProject)
-        await em.flush()
+        courseProject.title = req.body.title
+
+        await em.persist(courseProject).flush()
+        return res.status(201).json({courseProject})
+
     } catch (error) {
         console.error(error)
         next(error)
