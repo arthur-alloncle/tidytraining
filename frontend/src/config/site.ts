@@ -1,28 +1,16 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Vite + HeroUI",
+  name: "TidyTraining - s'organiser pour apprendre et réussir",
   description: "Make beautiful websites regardless of your design experience.",
   navItems: [
     {
-      label: "Home",
+      label: "Mon dashboard",
       href: "/",
     },
     {
-      label: "Docs",
+      label: "Mes projets",
       href: "/docs",
-    },
-    {
-      label: "Pricing",
-      href: "/pricing",
-    },
-    {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
     },
   ],
   navMenuItems: [
@@ -64,6 +52,6 @@ export const siteConfig = {
     twitter: "https://twitter.com/hero_ui",
     docs: "https://heroui.com",
     discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
+    sponsor: "/pricing",
   },
 };
