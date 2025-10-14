@@ -9,19 +9,12 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
   CardBody,
   Card,
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-} from "react";
 import { HiEye, HiLink, HiTrash } from "react-icons/hi2";
+import { format } from "date-fns";
 
 export default function DocsPage() {
   interface ICourseProject {
@@ -39,7 +32,6 @@ export default function DocsPage() {
     },
     refetchOnMount: false,
   });
-
 
   const columns = [
     {
@@ -81,7 +73,7 @@ export default function DocsPage() {
                       <TableRow key={item.id}>
                         <TableCell>{item.title}</TableCell>
                         <TableCell>{}</TableCell>
-                        <TableCell>{item.created_at}</TableCell>
+                        <TableCell>{format(item.created_at, "dd/MM/yyyy")}</TableCell>
                         <TableCell>
                           <div className="flex gap-4 justify-left">
                             <Button

@@ -40,9 +40,8 @@ export const Navbar = () => {
             description: "Le projet de cours a bien été créé",
             color: "success"
           })
-          //@ts-ignore
-          navigate({
-            pathname: `/blog/${res.data.courseProject.id}`,
+          
+          navigate(`/blog/${res.data.courseProject.id}`, {
             state: { isOpen: true }
           })
         }).catch((error) => {

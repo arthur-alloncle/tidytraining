@@ -13,12 +13,14 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { HiCog } from "react-icons/hi2";
+import { useEffect, useState } from "react";
 
 export default function DocsPage() {
   const location = useLocation();
   const url = location.pathname.split("/");
   const id = url[url.length - 1];
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isNewProject, setIsNewProject] = useState<boolean>();
 
   interface ICourseProject {
     data: {
@@ -27,8 +29,13 @@ export default function DocsPage() {
     };
   };
 
-  console.log(useLocation().state);
-  
+  useEffect(() => {
+    if (location.state?.isOpen) {
+      onOpen();
+      return;
+    }
+  }, [])
+
 
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ["getProject"],
