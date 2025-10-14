@@ -20,7 +20,6 @@ export default function DocsPage() {
   const url = location.pathname.split("/");
   const id = url[url.length - 1];
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isNewProject, setIsNewProject] = useState<boolean>();
 
   interface ICourseProject {
     data: {
