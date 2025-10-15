@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { User } from "./user.entity.js";
 
 @Entity()
 export class CourseProject {
@@ -13,4 +14,7 @@ export class CourseProject {
 
     @Property({onUpdate: () => new Date()})
     updated_at = new Date;
+
+    @ManyToOne()
+    user!: User
 }

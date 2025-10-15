@@ -14,7 +14,7 @@
     "dev2": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:create'",
-    "pull-migrations": "docker cp react_express_docker-backend-1:/code/migrations/ ./src/migrations/.",
+    "pull-migrations": "docker cp react_express_docker-backend-1:/code/migrations/. ./src/migrations/.",
     "play-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:up'",
     "reverse-migrations": "docker exec -it react_express_docker-backend-1 sh -c 'npx mikro-orm migration:down'",
     "mariadb": "docker exec -it react_express_docker-database-1 sh -c 'mariadb -u root -p tidytraining'"
@@ -28,6 +28,7 @@
     "@mikro-orm/migrations": "^6.5.7",
     "@mikro-orm/reflection": "^6.5.7",
     "@types/cors": "^2.8.19",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@mikro-orm/cli": "^6.5.7",
     "@tsconfig/node-lts": "^22.0.2",
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.0",
     "nodemon": "^3.1.10",
