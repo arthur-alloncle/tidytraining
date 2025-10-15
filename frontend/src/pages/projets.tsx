@@ -16,17 +16,18 @@ import { useQuery } from "@tanstack/react-query";
 import { HiEye, HiLink, HiTrash } from "react-icons/hi2";
 import { format } from "date-fns";
 
-export default function DocsPage() {
+export default function ProjectsPage() {
   interface ICourseProject {
     title: string;
     id: number;
     created_at: string;
   }
 
+  // Forecast : manage states
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ["getProject"],
     queryFn: async () => {
-      const res = await fetch("http://localhost/project/", { method: "GET" });
+      const res = await fetch("http://localhost/project/me/5", { method: "GET" });
 
       return await res.json();
     },
@@ -79,7 +80,7 @@ export default function DocsPage() {
                             <Button
                               isIconOnly
                               as={Link}
-                              href={"blog/" + item.id}
+                              href={"projet/" + item.id}
                             >
                               <HiEye />
                             </Button>

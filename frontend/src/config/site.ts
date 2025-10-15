@@ -10,7 +10,7 @@ export const siteConfig = {
     },
     {
       label: "Mes projets",
-      href: "/docs",
+      href: "/projets",
     },
   ],
   navMenuItems: [

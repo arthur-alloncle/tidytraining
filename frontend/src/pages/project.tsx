@@ -13,9 +13,9 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { HiCog } from "react-icons/hi2";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-export default function DocsPage() {
+export default function ProjectPage() {
   const location = useLocation();
   const url = location.pathname.split("/");
   const id = url[url.length - 1];
@@ -36,6 +36,7 @@ export default function DocsPage() {
   }, [])
 
 
+  // Forecast : manage states
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ["getProject"],
     queryFn: async () => {

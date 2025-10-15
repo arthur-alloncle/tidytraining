@@ -41,7 +41,7 @@ export const Navbar = () => {
             color: "success"
           })
           
-          navigate(`/blog/${res.data.courseProject.id}`, {
+          navigate(`/projet/${res.data.courseProject.id}`, {
             state: { isOpen: true }
           })
         }).catch((error) => {
