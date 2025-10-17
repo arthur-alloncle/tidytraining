@@ -13,24 +13,30 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body);
+
     const saltRouds = 10;
     const passwordString = req.body.password;
     const user = new User();
-    let password = '';
 
-    user.first_name = req.body.firstName;
-    user.last_name = req.body.lastName;
-    user.email = req.body.email;
+    // user.first_name = req.body.firstName;
+    // user.last_name = req.body.lastName;
+    // user.email = req.body.email;
 
-    bcrypt.hash(passwordString, saltRouds).then((hash) => {
+    bcrypt
+      .hash(passwordString, saltRouds)
+      .then((hash) => {
         user.password = hash;
-    }).then(async () => {
+      })
+      .then(async () => {
         await em.persist(user).flush();
         return res.status(201).json(user);
-    })
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
   } catch (error) {
     console.error(error);
-    next(error);
   }
 };
 
@@ -40,8 +46,15 @@ export const findUserById = async (
   next: NextFunction
 ) => {
   try {
-    const user = await em.findOne<any>(User, req.params.id);
-    return res.status(200).json({ success: true, data: user });
+    await em
+      .findOne<any>(User, 22)
+      .then(async (user) => {
+        if (!user) return res.status(404).json({ success: false, data: null });
+        return res.status(200).json({ success: true, data: user });
+      })
+      .catch((e: any) => {
+        throw new Error(e);
+      });
   } catch (error) {
     console.error(error);
     next(error);

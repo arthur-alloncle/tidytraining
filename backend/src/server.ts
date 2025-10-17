@@ -21,7 +21,7 @@ process.on("SIGINT", function onSigint() {
       "Got SIGINT (aka ctrl-c in docker). Graceful shutdown ",
       new Date().toISOString()
     );
-    execSync('docker cp react_express_docker-backend-1:/code/migrations/ ./src/migrations/.')
+    execSync('docker cp tidytraining-backend-1:/code/migrations/. ./src/migrations/.')
     shutdown();
   });
   

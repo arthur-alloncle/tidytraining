@@ -15,6 +15,6 @@ export class CourseProject {
     @Property({onUpdate: () => new Date()})
     updated_at = new Date;
 
-    @ManyToOne()
+    @ManyToOne({deleteRule: "cascade", updateRule: "no action"})
     user!: User
 }
