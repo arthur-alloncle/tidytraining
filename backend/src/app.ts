@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import courseProjectRoutes from './routes/courseProjectRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express()
 
@@ -10,5 +11,7 @@ app.use(cors())
 
 app.use('/project', courseProjectRoutes);
 app.use('/auth', userRoutes);
+
+app.use(errorHandler)
 
 export default app;

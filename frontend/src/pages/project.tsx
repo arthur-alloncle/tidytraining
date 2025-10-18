@@ -25,6 +25,7 @@ export default function ProjectPage() {
     data: {
       id: number;
       title: string;
+      user: number;
     };
   };
 

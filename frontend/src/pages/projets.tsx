@@ -20,6 +20,7 @@ export default function ProjectsPage() {
   interface ICourseProject {
     title: string;
     id: number;
+    user: number;
     created_at: string;
   }
 

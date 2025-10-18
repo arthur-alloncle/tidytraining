@@ -32,7 +32,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mikro-orm": "^6.5.7"
+    "mikro-orm": "^6.5.7",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^6.5.7",
