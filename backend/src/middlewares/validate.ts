@@ -15,12 +15,11 @@ export const validate =
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        error.issues.map
         const details = error.issues.map((e: any) => ({
           path: e.path.join('.'),
           message: e.message,
         }));
-        return next(ApiError.badRequest('Validation error', details));
+        return next(ApiError.badRequest('❌ Validation error', details));
       }
 
       return next(error);

@@ -1,4 +1,4 @@
-import { Entity, Property, PrimaryKey, DynamicPassword } from "@mikro-orm/core";
+import { Entity, Property, PrimaryKey, Unique } from "@mikro-orm/core";
 
 @Entity()
 export class User {
@@ -12,6 +12,7 @@ export class User {
     last_name!: string;
 
     @Property()
+    @Unique()
     email!: string;
 
     @Property()

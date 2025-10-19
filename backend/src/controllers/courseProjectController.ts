@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { MikroORM } from "@mikro-orm/mariadb";
+import { MikroORM, RequestContext } from "@mikro-orm/mariadb";
 import mconfig from "../mikro-orm.config.js";
 import { CourseProject } from "../entity/courseProject.entity.js";
 import { ApiResponse } from "../types/api-response.js";
 import { ApiError } from "../utils/ApiError.js";
+import { populate } from "dotenv";
 
 const orm = await MikroORM.init(mconfig);
-const em = orm.em.fork();
 
 export const getAllCourseProject = async (
   req: Request,
@@ -14,7 +14,8 @@ export const getAllCourseProject = async (
   next: NextFunction
 ) => {
   try {
-    const courseProjectList = await em.find(CourseProject, {});
+    const em = RequestContext.getEntityManager();
+    const courseProjectList = await em?.find(CourseProject, {});
     const response: ApiResponse<CourseProject[]> = {
       success: true,
       data: courseProjectList,
@@ -31,7 +32,8 @@ export const getCourseProjetById = async (
   next: NextFunction
 ) => {
   try {
-    const courseProject = await em.findOne(CourseProject, {
+    const em = RequestContext.getEntityManager();
+    const courseProject = await em?.findOne(CourseProject, {
       id: Number(req.params.id),
     });
 
@@ -52,15 +54,19 @@ export const getCourseProjectByUserId = async (
   res: Response<ApiResponse<CourseProject[]>>,
   next: NextFunction
 ) => {
-  try {
-    const qb = em.createQueryBuilder(CourseProject, "c");
-    qb.select(["u.id", "u.*", "c.*"], true)
-      .join("c.user", "u")
-      .where({ "u.id": req.params.id });
-    console.log(qb.getQuery());
+  const id = Number(req.params.id);
+  const em = RequestContext.getEntityManager();
 
-    const courseProject = await qb.execute();
-    const response: ApiResponse<CourseProject[]> = {success: true, data: courseProject}
+  try {
+    const courseProject = await em?.find(
+      CourseProject,
+      { user: id },
+      { populate: ["user"] }
+    );
+    const response: ApiResponse<CourseProject[]> = {
+      success: true,
+      data: courseProject,
+    };
     return res.status(200).json(response);
   } catch (err) {
     next(err);
@@ -73,12 +79,23 @@ export const addCourseProject = async (
   next: NextFunction
 ) => {
   try {
-    const courseProject = new CourseProject();
-    courseProject.title = req.body.title
-    courseProject.user = req.body.user;
+    const em = RequestContext.getEntityManager();
 
-    const executionResponse = await em.persist(courseProject).flush()
-        return res.status(201).json({ executionResponse });
+    const { title, user } = req.body;
+
+    const courseProject = em?.create(CourseProject, {
+      title,
+      user,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    if (!courseProject) {
+      throw ApiError.internal();
+    }
+
+    const executionResponse = await em?.persistAndFlush(courseProject);
+    return res.status(201).json({ executionResponse });
   } catch (error) {
     next(error);
   }

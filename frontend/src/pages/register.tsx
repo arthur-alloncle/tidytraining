@@ -13,7 +13,9 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
+  const errors: string[] = []
 
+  // Confirm password match
   useEffect(() => {
     if (password === confirmPassword && password.length > 0) {
       setIsPasswordMatch(true);
@@ -22,38 +24,52 @@ export const RegisterPage = () => {
     setIsPasswordMatch(false);
   }, [confirmPassword]);
 
+  // Validate password schema as described in backend
+  if (password.length > 0) {
+    if (password.length < 8) {
+      errors.push("Votre mot de passe doit contenir au moins 8 caractères");
+    }
+    if ((password.match(/[A-Z]/g) || []).length < 1) {
+      errors.push("Votre mot de passe doit inclure au moins 1 majuscule");
+    }
+
+    if ((password.match(/[a-z]/g) || []).length < 1) {
+      errors.push("Votre mot de passe doit inclure au moins 1 majuscule");
+    }
+
+    if ((password.match(/[0-9]/g) || []).length < 1) {
+      errors.push("Votre mot de passe doit inclure au moins 1 chiffre");
+    }
+
+  }
+
   const navigate = useNavigate();
 
   const mutation = useMutation({
-    mutationFn: async (body: {[k: string]: FormDataEntryValue}) => {
-        axios
-        .post("http://localhost/auth/register", body)
-        .then((res) => {
-          console.log(body);
-          
-          addToast({
-            title: `Enchanté ${res.data.first_name} !`,
-            description: "Votre compte a bien été créé",
-            color: "success"
-          })
-          console.log(res);
-
-
-          
-          
-          navigate(`/me`, {
-            state: { id: res.data.id, firstName: res.data.first_name }
-          })
-        }).catch((error) => {
-          console.warn(error)
-          // addToast({
-          //   title: "Une erreur est survenue",
-          //   description: "Le projet n'a pas été créé",
-          //   color: "danger"
-          // })
-        })
+    mutationFn: async (body: Record<string, FormDataEntryValue>) => {
+      const { data } = await axios.post("http://localhost/auth/register", body)
+      return data;
     },
-  });
+    onSuccess: (data) => {
+      addToast({
+        title: `Enchanté ${data.first_name} 👋`,
+        description: "Votre compte a bien été créé",
+        color: "success",
+      });
+
+      navigate("/me", {
+        state: { id: data.id, firstName: data.first_name },
+      });
+    },
+    onError: (error: any) => {
+      console.warn(error);
+      addToast({
+        title: "Une erreur est survenue",
+        description: "Impossible de créer le compte",
+        color: "danger",
+      });
+    },
+  })
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,7 +94,7 @@ export const RegisterPage = () => {
                 isRequired
                 label="Prénom"
                 variant="bordered"
-                name="firstName"
+                name="first_name"
                 type="text"
                 value={firstName}
                 onValueChange={setFirstName}
@@ -87,7 +103,7 @@ export const RegisterPage = () => {
                 isRequired
                 label="Nom"
                 variant="bordered"
-                name="lastName"
+                name="last_name"
                 type="text"
                 value={lastName}
                 onValueChange={setLastName}
@@ -103,6 +119,14 @@ export const RegisterPage = () => {
               />
               <Input
                 isRequired
+                errorMessage={() => (
+                  <ul>
+                    {errors.map((error, i) => (
+                      <li key={i}>{error}</li>
+                    ))}
+                  </ul>
+                )}
+                isInvalid={errors.length > 0}
                 label="Mot de passe"
                 variant="bordered"
                 name="password"
