@@ -1,12 +1,19 @@
 import { Router } from "express";
 
-import { getCourseProjetById, getAllCourseProject, addCourseProject, getCourseProjectByUserId} from "../controllers/courseProjectController.js";
+import {
+  getCourseProjetById,
+  getAllCourseProject,
+  addCourseProject,
+  getCourseProjectByUserId,
+} from "../controllers/courseProjectController.js";
+import { validate } from "../middlewares/validate.js";
+import { addCourseProjectSchema, getCourseProjectByUserIdSchema } from "../schemas/courseProject.schema.js";
 
 const router = Router();
 
-router.get('/', getAllCourseProject);
-router.get('/:id', getCourseProjetById);
-router.get('/me/:id', getCourseProjectByUserId);
-router.post('/', addCourseProject);
+router.get("/", getAllCourseProject);
+router.get("/:id", getCourseProjetById);
+router.get("/me/:id", validate(getCourseProjectByUserIdSchema), getCourseProjectByUserId);
+router.post("/", validate(addCourseProjectSchema), addCourseProject);
 
 export default router;

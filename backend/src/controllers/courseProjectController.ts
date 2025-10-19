@@ -56,7 +56,7 @@ export const getCourseProjectByUserId = async (
     const qb = em.createQueryBuilder(CourseProject, "c");
     qb.select(["u.id", "u.*", "c.*"], true)
       .join("c.user", "u")
-      .where({ "u.id": 5 }); // !!! Hard coded id = 5 !!! (forecast TT-31)
+      .where({ "u.id": req.params.id });
     console.log(qb.getQuery());
 
     const courseProject = await qb.execute();
@@ -77,8 +77,8 @@ export const addCourseProject = async (
     courseProject.title = req.body.title
     courseProject.user = req.body.user;
 
-    await em.persist(courseProject).flush();
-    return res.status(201).json({ courseProject });
+    const executionResponse = await em.persist(courseProject).flush()
+        return res.status(201).json({ executionResponse });
   } catch (error) {
     next(error);
   }
