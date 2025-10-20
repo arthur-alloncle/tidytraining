@@ -10,7 +10,7 @@ export const UserProfilePage = () => {
             queryKey: ["findUserById"],
             queryFn: async () => {
                 try {
-                    const res = await axios.get(`http://localhost/auth/me/${id}`);
+                    const res = await axios.get(`http://localhost/me/${id}`);
                     return res.data;
                 } catch (error) {
                     console.log(error);
