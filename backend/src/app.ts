@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/mariadb';
 import mconfig from './mikro-orm.config.js';
+import cookieParser from 'cookie-parser';
 
 const app = express()
 const orm = await MikroORM.init(mconfig);
@@ -13,6 +14,7 @@ const orm = await MikroORM.init(mconfig);
 
 app.use(express.json());
 app.use(cors())
+app.use(cookieParser())
 
 app.use((req, res, next) => {
     RequestContext.create(orm.em, next);

@@ -5,6 +5,7 @@ import ProjectsPage from "@/pages/projets";
 import ProjectPage from "@/pages/project";
 import { RegisterPage } from "./pages/register";
 import { UserProfilePage } from "./pages/userProfile";
+import LoginPage from "./pages/login";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       {/* Utilisateurs */}
       <Route element={<RegisterPage />} path='/inscription' />
       <Route element={<UserProfilePage />} path='/me/:id' />
+      <Route element={<LoginPage />} path='/login' />
     </Routes>
   );
 }

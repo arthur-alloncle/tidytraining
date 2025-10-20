@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { MikroORM, RequestContext } from "@mikro-orm/mariadb";
-import mconfig from "../mikro-orm.config.js";
+import { RequestContext } from "@mikro-orm/mariadb";
 import { CourseProject } from "../entity/courseProject.entity.js";
 import { ApiResponse } from "../types/api-response.js";
 import { ApiError } from "../utils/ApiError.js";
-import { populate } from "dotenv";
-
-const orm = await MikroORM.init(mconfig);
 
 export const getAllCourseProject = async (
   req: Request,
