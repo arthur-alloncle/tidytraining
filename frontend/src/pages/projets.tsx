@@ -20,6 +20,7 @@ export default function ProjectsPage() {
   interface ICourseProject {
     title: string;
     id: number;
+    user: number;
     created_at: string;
   }
 
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ["getProject"],
     queryFn: async () => {
-      const res = await fetch("http://localhost/project/me/5", { method: "GET" });
+      const res = await fetch(`http://localhost/project/me/2`, { method: "GET" });
 
       return await res.json();
     },

@@ -134,6 +134,12 @@ export const Navbar = () => {
                       variant="bordered"
                     />
                     <Button type="submit">Créer</Button>
+                    <Input
+                      name="user"
+                      type='hidden'
+                      readOnly
+                      value={'2'} // HARD CODED
+                    />
                   </Form>
                 </div>
               </div>

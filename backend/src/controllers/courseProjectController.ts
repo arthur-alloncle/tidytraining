@@ -1,55 +1,74 @@
 import { Request, Response, NextFunction } from "express";
-import { MikroORM } from "@mikro-orm/mariadb";
+import { MikroORM, RequestContext } from "@mikro-orm/mariadb";
 import mconfig from "../mikro-orm.config.js";
 import { CourseProject } from "../entity/courseProject.entity.js";
+import { ApiResponse } from "../types/api-response.js";
+import { ApiError } from "../utils/ApiError.js";
+import { populate } from "dotenv";
 
 const orm = await MikroORM.init(mconfig);
-const em = orm.em.fork();
 
 export const getAllCourseProject = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse<CourseProject[]>>,
   next: NextFunction
 ) => {
   try {
-    const courseProjectList = await em.findAll(CourseProject);
-    return res.status(200).json({ success: true, data: courseProjectList });
+    const em = RequestContext.getEntityManager();
+    const courseProjectList = await em?.find(CourseProject, {});
+    const response: ApiResponse<CourseProject[]> = {
+      success: true,
+      data: courseProjectList,
+    };
+    return res.status(200).json(response);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
 
 export const getCourseProjetById = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse<CourseProject>>,
   next: NextFunction
 ) => {
   try {
-    const courseProject = await em.findOne<any>(CourseProject, req.params.id);
-    return res.status(200).json({ success: true, data: courseProject });
+    const em = RequestContext.getEntityManager();
+    const courseProject = await em?.findOne(CourseProject, {
+      id: Number(req.params.id),
+    });
+
+    if (!courseProject) throw ApiError.notFound("Course project not found");
+
+    const response: ApiResponse<CourseProject> = {
+      success: true,
+      data: courseProject,
+    };
+    return res.status(200).json(response);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
 
 export const getCourseProjectByUserId = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse<CourseProject[]>>,
   next: NextFunction
 ) => {
-  try {
-    const qb = em.createQueryBuilder(CourseProject, "c");
-    qb.select(["u.id", "u.*", "c.*"], true)
-      .join("c.user", "u")
-      .where({ "u.id": 5 }); // !!! Hard coded id = 5 !!! (forecast TT-31)
-    console.log(qb.getQuery());
+  const id = Number(req.params.id);
+  const em = RequestContext.getEntityManager();
 
-    const courseProject = await qb.execute();
-    return res.status(200).json({ status: true, data: courseProject });
+  try {
+    const courseProject = await em?.find(
+      CourseProject,
+      { user: id },
+      { populate: ["user"] }
+    );
+    const response: ApiResponse<CourseProject[]> = {
+      success: true,
+      data: courseProject,
+    };
+    return res.status(200).json(response);
   } catch (err) {
-    console.error(err);
     next(err);
   }
 };
@@ -60,13 +79,24 @@ export const addCourseProject = async (
   next: NextFunction
 ) => {
   try {
-    const courseProject = new CourseProject();
-    courseProject.title = req.body.title;
+    const em = RequestContext.getEntityManager();
 
-    await em.persist(courseProject).flush();
-    return res.status(201).json({ courseProject });
+    const { title, user } = req.body;
+
+    const courseProject = em?.create(CourseProject, {
+      title,
+      user,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    if (!courseProject) {
+      throw ApiError.internal();
+    }
+
+    const executionResponse = await em?.persistAndFlush(courseProject);
+    return res.status(201).json({ executionResponse });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };

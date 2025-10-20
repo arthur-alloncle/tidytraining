@@ -1,62 +1,71 @@
 import { Request, Response, NextFunction } from "express";
-import { MikroORM } from "@mikro-orm/mariadb";
-import mconfig from "../mikro-orm.config.js";
+import { MikroORM, RequestContext } from "@mikro-orm/mariadb";
 import { User } from "../entity/user.entity.js";
 import bcrypt from "bcrypt";
-
-const orm = await MikroORM.init(mconfig);
-const em = orm.em.fork();
+import { ApiResponse } from "../types/api-response.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const createUser = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse<Omit<User, "password">>>,
   next: NextFunction
 ) => {
   try {
-    console.log(req.body);
+    const em = RequestContext.getEntityManager();
 
-    const saltRouds = 10;
-    const passwordString = req.body.password;
-    const user = new User();
+    const { first_name, last_name, email, password } = req.body;
 
-    // user.first_name = req.body.firstName;
-    // user.last_name = req.body.lastName;
-    // user.email = req.body.email;
+    // Check if user already exists by email
+    const existing = await em?.findOne(User, { email });
+    if (existing) {
+      throw ApiError.conflict("Account already exists");
+    }
 
-    bcrypt
-      .hash(passwordString, saltRouds)
-      .then((hash) => {
-        user.password = hash;
-      })
-      .then(async () => {
-        await em.persist(user).flush();
-        return res.status(201).json(user);
-      })
-      .catch((e) => {
-        throw new Error(e);
-      });
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = em?.create(User, {
+      first_name,
+      last_name,
+      email,
+      password: hash,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    if (!user) {
+      throw ApiError.internal();
+    }
+
+    // Hide password in response
+    await em?.persistAndFlush(user);
+    const { password: _, ...safeUser } = user;
+
+    return res.status(201).json({
+      success: true,
+      data: safeUser,
+    });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
 export const findUserById = async (
   req: Request,
-  res: Response,
+  res: Response<ApiResponse<User>>,
   next: NextFunction
 ) => {
   try {
+    const em = RequestContext.getEntityManager();
     await em
-      .findOne<any>(User, 22)
+      ?.findOne<any>(User, -1)
       .then(async (user) => {
-        if (!user) return res.status(404).json({ success: false, data: null });
+        if (!user) throw ApiError.notFound();
         return res.status(200).json({ success: true, data: user });
       })
       .catch((e: any) => {
-        throw new Error(e);
+        next(e);
       });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
