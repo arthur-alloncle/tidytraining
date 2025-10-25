@@ -15,6 +15,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { HiEye, HiLink, HiTrash } from "react-icons/hi2";
 import { format } from "date-fns";
+import { getUserId } from "@/utils/userId";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export default function ProjectsPage() {
   interface ICourseProject {
@@ -24,11 +26,17 @@ export default function ProjectsPage() {
     created_at: string;
   }
 
+  const userId = getUserId();
+
+  console.log(userId)
+
   // Forecast : manage states
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ["getProject"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost/project/me/2`, { method: "GET" });
+      const res = await fetch(`http://localhost/project/me/${userId}`, {
+        method: "GET",
+      });
 
       return await res.json();
     },
@@ -56,6 +64,10 @@ export default function ProjectsPage() {
 
   return (
     <DefaultLayout>
+      {isPending && "loading..."}
+      {isFetching && "???"}
+      {error && "error"}
+
       <section className="flex flex-col gap-4 py-8 md:py-10">
         <div className="inline-block max-w-lg text-center justify-center">
           <h1 className={title()}>Mes projets</h1>
@@ -74,8 +86,10 @@ export default function ProjectsPage() {
                     {(item: ICourseProject) => (
                       <TableRow key={item.id}>
                         <TableCell>{item.title}</TableCell>
-                        <TableCell>{}</TableCell>
-                        <TableCell>{format(item.created_at, "dd/MM/yyyy")}</TableCell>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>
+                          {format(item.created_at, "dd/MM/yyyy")}
+                        </TableCell>
                         <TableCell>
                           <div className="flex gap-4 justify-left">
                             <Button

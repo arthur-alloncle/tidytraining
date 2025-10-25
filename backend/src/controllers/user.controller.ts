@@ -25,3 +25,24 @@ export const findUserById = async (
     next(error);
   }
 };
+
+export const getUserProfile = async (
+  req: Request,
+  res: Response<ApiResponse<any>>,
+  next: NextFunction
+) => {
+  try {
+    const em = RequestContext.getEntityManager();
+    const userId = req.user?.userId;
+    if (!userId) throw ApiError.unauthorized();
+    let r: any;
+    const user = await em?.findOne(User, { id: userId });
+
+    console.log(r);
+
+    const { password: _, refreshToken, ...safeUser } = user as any;
+    return res.status(200).json({ success: true, data: safeUser });
+  } catch (error) {
+    next(error);
+  }
+};

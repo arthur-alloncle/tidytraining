@@ -12,49 +12,49 @@ import {
 import { ApiResponse } from "../types/api-response.js";
 
 export const createUser = async (
-    req: Request,
-    res: Response<ApiResponse<Omit<User, "password">>>,
-    next: NextFunction
-  ) => {
-    try {
-      const em = RequestContext.getEntityManager();
-  
-      const { first_name, last_name, email, password } = req.body;
-  
-      // Check if user already exists by email
-      const existing = await em?.findOne(User, { email });
-      if (existing) {
-        throw ApiError.conflict("Account already exists");
-      }
-  
-      const hash = await bcrypt.hash(password, 10);
-  
-      const user = em?.create(User, {
-        first_name,
-        last_name,
-        email,
-        password: hash,
-        refreshToken: null,
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-  
-      if (!user) {
-        throw ApiError.internal();
-      }
-  
-      // Hide password in response
-      await em?.persistAndFlush(user);
-      const { password: _, ...safeUser } = user;
-  
-      return res.status(201).json({
-        success: true,
-        data: safeUser,
-      });
-    } catch (error) {
-      next(error);
+  req: Request,
+  res: Response<ApiResponse<Omit<User, "password">>>,
+  next: NextFunction
+) => {
+  try {
+    const em = RequestContext.getEntityManager();
+
+    const { first_name, last_name, email, password } = req.body;
+
+    // Check if user already exists by email
+    const existing = await em?.findOne(User, { email });
+    if (existing) {
+      throw ApiError.conflict("Account already exists");
     }
-  };
+
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = em?.create(User, {
+      first_name,
+      last_name,
+      email,
+      password: hash,
+      refreshToken: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    if (!user) {
+      throw ApiError.internal();
+    }
+
+    // Hide password in response
+    await em?.persistAndFlush(user);
+    const { password: _, ...safeUser } = user;
+
+    return res.status(201).json({
+      success: true,
+      data: safeUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const loginUser = async (
   req: Request,
@@ -66,6 +66,7 @@ export const loginUser = async (
     const { email, password } = req.body;
 
     const user = await em?.findOne(User, { email });
+
     if (!user) throw ApiError.unauthorized("Invalid credentials");
 
     const validPassword = await bcrypt.compare(password, user.password);
