@@ -1,5 +1,5 @@
 import DefaultLayout from "@/layouts/default";
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button, Card, CardBody, Link } from "@heroui/react";
 
 export default function IndexPage() {
   // if (isPending) return 'Loading...';
@@ -12,7 +12,9 @@ export default function IndexPage() {
           <CardBody>
             <div className="flex p-5">
               <Button>Démarrez maintenant</Button>
-              <Button>Connectez-vous</Button>
+              <Button as={Link} href="/login">
+                Connectez-vous
+              </Button>
             </div>
           </CardBody>
         </Card>

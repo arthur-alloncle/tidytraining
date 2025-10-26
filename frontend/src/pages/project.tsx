@@ -57,6 +57,9 @@ export default function ProjectPage() {
 
   return (
     <DefaultLayout>
+      {isPending && 'loading...'}
+      {isFetching && '???'}
+      {error && 'error'}
       <Drawer backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (

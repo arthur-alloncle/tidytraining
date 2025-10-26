@@ -5,7 +5,7 @@ import {
   getAllCourseProject,
   addCourseProject,
   getCourseProjectByUserId,
-} from "../controllers/courseProjectController.js";
+} from "../controllers/courseProject.controller.js";
 import { validate } from "../middlewares/validate.js";
 import { addCourseProjectSchema, getCourseProjectByUserIdSchema } from "../schemas/courseProject.schema.js";
 

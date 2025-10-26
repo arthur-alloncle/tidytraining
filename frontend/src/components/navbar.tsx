@@ -58,8 +58,12 @@ export const Navbar = () => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('id not found');
 
-    const body = Object.fromEntries(new FormData(e.currentTarget));
+    const formData = new FormData(e.currentTarget)
+    formData.append('user', userId)
+    const body = Object.fromEntries(formData);
     mutation.mutate(body)
   };
 
@@ -134,12 +138,12 @@ export const Navbar = () => {
                       variant="bordered"
                     />
                     <Button type="submit">Créer</Button>
-                    <Input
+                    {/* <Input
                       name="user"
                       type='hidden'
                       readOnly
                       value={'2'} // HARD CODED
-                    />
+                    /> */}
                   </Form>
                 </div>
               </div>
